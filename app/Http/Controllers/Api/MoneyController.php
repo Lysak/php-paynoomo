@@ -7,6 +7,7 @@ use App\src\Deviation\Deviation;
 use App\src\RequestMoneyValidator\Dto\TransactionDto;
 use App\src\RequestMoneyValidator\Requests\RequestMoneyValidatorRequest;
 use App\src\RequestMoneyValidator\Services\RequestMoneyValidator;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,27 +47,10 @@ class MoneyController extends Controller
                 ],
                 Response::HTTP_OK
             );
+        } catch (InvalidArgumentException $e) {
+            return response()->json(['successful' => false], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Throwable $e) {
-//            echo '<pre>';
-//            print_r(__METHOD__ . ':' . __LINE__);
-//            echo PHP_EOL;
-//            echo PHP_EOL;
-//            print_r([
-//                        "message" => $e->getMessage(),
-//                        "file" => $e->getFile(),
-//                        "line" => $e->getLine(),
-//                        "traceAsString" => $e->getTraceAsString()
-//                    ]);
-//            echo PHP_EOL;
-//            echo PHP_EOL;
-//            echo '</pre>';
-//            die();
-            return response()->json(
-                [
-                    'successful' => false,
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
+            return response()->json(['successful' => false], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
