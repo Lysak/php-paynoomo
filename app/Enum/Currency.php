@@ -9,17 +9,13 @@ enum Currency: int
     case USD = 840;
     case EUR = 978;
 
-    public static function get(string $currencyCode): self
+    public static function get(string $currencyName): self
     {
-        $currencyCode = strtoupper($currencyCode);
-        $currencyValues = self::cases();
+        $currencyName = strtoupper($currencyName);
+        $currencyList = self::names();
 
-        //TODO: find way to avoid foreach
-
-        foreach ($currencyValues as $case) {
-            if ($case->name === $currencyCode) {
-                return $case;
-            }
+        if (array_key_exists($currencyName, $currencyList)) {
+            return $currencyList[$currencyName];
         }
 
         throw new InvalidArgumentException('Wrong currency');
@@ -28,12 +24,10 @@ enum Currency: int
     public static function names(): array
     {
         $cases = self::cases();
-        $names = [];
 
-        foreach ($cases as $case) {
-            $names[] = $case->name;
-        }
-
-        return $names;
+        return array_reduce($cases, static function ($result, $case) {
+            $result[$case->name] = $case;
+            return $result;
+        }, []);
     }
 }
